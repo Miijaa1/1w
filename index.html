@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>НомынЕртөнц — Онлайн Номын Дэлгүүр</title>
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary:        #6B3A2A;
+            --primary-hover:  #7D4533;
+            --secondary:      #C9882A;
+            --accent:         #E8C547;
+            --bg:             #FBF7F0;
+            --bg-card:        #FFFFFF;
+            --bg-dark:        #2D1B0E;
+            --text:           #2D1B0E;
+            --text-sec:       #7C5A4A;
+            --text-light:     #A08070;
+            --border:         #E5D5C0;
+            --shadow:         0 4px 20px rgba(107,58,42,.12);
+            --shadow-h:       0 8px 32px rgba(107,58,42,.22);
+            --radius:         12px;
+            --radius-s:       8px;
+            --ease:           .3s ease;
+        }
+
+        /* ===== RESET ===== */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { font-family:'Segoe UI','Arial Unicode MS',Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+        button { cursor:pointer; border:none; background:none; font-family:inherit; }
+        input, select, textarea { font-family:inherit; }
+        a { text-decoration:none; color:inherit; }
+
+        /* ===== NAV ===== */
+        nav {
+            position:sticky; top:0; z-index:1000;
+            background:var(--bg-dark);
+            height:64px; padding:0 24px;
+            display:flex; align-items:center; justify-content:space-between;
+            box-shadow:0 2px 12px rgba(0,0,0,.35);
+        }
+        .nav-logo {
+            font-size:1.35rem; font-weight:800; color:var(--accent);
+            cursor:pointer; letter-spacing:.3px; white-space:nowrap;
+        }
+        .nav-logo span { color:#fff; }
+        .nav-links { display:flex; gap:4px; align-items:center; }
+        .nav-links button {
+            color:#ccc; padding:8px 14px; border-radius:8px;
+            font-size:.9rem; transition:var(--ease);
+        }
+        .nav-links button:hover, .nav-links button.active { color:var(--accent); background:rgba(255,255,255,.08); }
+        .nav-right { display:flex; gap:10px; align-items:center; }
+        .nav-search {
+            display:flex; align-items:center; gap:8px;
+            background:rgba(255,255,255,.1); border-radius:8px; padding:7px 12px;
+            border:1px solid rgba(255,255,255,.08);
+        }
+        .nav-search input {
+            background:none; border:none; color:#fff;
+            font-size:.875rem; width:170px; outline:none;
+        }
+        .nav-search input::placeholder { color:rgba(255,255,255,.45); }
+        .cart-btn {
+            display:flex; align-items:center; gap:6px;
+            padding:8px 16px; background:var(--secondary); color:#fff;
+            border-radius:8px; font-size:.875rem; font-weight:700;
+            transition:var(--ease); white-space:nowrap;
+        }
+        .cart-btn:hover { background:var(--primary); }
+        .cart-count {
+            background:var(--accent); color:var(--bg-dark);
+            border-radius:50%; width:20px; height:20px;
+            font-size:.72rem; font-weight:800;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .mob-menu-btn { display:none; color:#fff; font-size:1.5rem; padding:4px 8px; }
+
+        /* ===== MOB NAV ===== */
+        #mob-nav {
+            display:none; position:sticky; top:64px; z-index:999;
+            background:var(--bg-dark); padding:12px 16px;
+            border-top:1px solid rgba(255,255,255,.07);
+        }
+        #mob-nav.open { display:block; }
+        #mob-nav button {
+            display:block; width:100%; text-align:left;
+            color:#ddd; padding:10px 14px; border-radius:8px;
+            font-size:.95rem; transition:var(--ease);
+        }
+        #mob-nav button:hover { color:var(--accent); background:rgba(255,255,255,.06); }
+        #mob-nav .mob-search {
+            margin-top:10px;
+            display:flex; align-items:center; gap:8px;
+            background:rgba(255,255,255,.1); border-radius:8px; padding:8px 12px;
+        }
+        #mob-nav .mob-search input {
+            background:none; border:none; color:#fff;
+            font-size:.95rem; width:100%; outline:none;
+        }
+        #mob-nav .mob-search input::placeholder { color:rgba(255,255,255,.4); }
+
+        /* ===== MAIN ===== */
+        main { min-height:calc(100vh - 64px - 220px); }
+
+        /* ===== HERO ===== */
+        .hero {
+            background:linear-gradient(135deg,#1a0a04 0%,#6B3A2A 55%,#C9882A 100%);
+            padding:90px 24px 80px; text-align:center; position:relative; overflow:hidden;
+        }
+        .hero::before {
+            content:''; position:absolute; inset:0; opacity:.06;
+            background-image:url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h4v4h-4zm8 0h4v4h-4zm8 0h4v4h-4zm8 0h4v4h-4zm-24 8h4v4h-4zm8 0h4v4h-4zm8 0h4v4h-4zm8 0h4v4h-4z' fill='%23fff' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .hero-inner { position:relative; z-index:1; max-width:640px; margin:0 auto; }
+        .hero h1 {
+            font-size:clamp(2rem,5vw,3.1rem); font-weight:900;
+            color:var(--accent); margin-bottom:16px;
+            text-shadow:0 2px 8px rgba(0,0,0,.35); line-height:1.2;
+        }
+        .hero p { font-size:1.05rem; color:rgba(255,255,255,.85); margin-bottom:36px; }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-cta {
+            padding:14px 34px; background:var(--accent); color:var(--bg-dark);
+            border-radius:50px; font-weight:800; font-size:1rem; transition:var(--ease);
+            box-shadow:0 4px 18px rgba(232,197,71,.4);
+        }
+        .btn-cta:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(232,197,71,.5); }
+        .btn-outline {
+            padding:14px 34px; border:2px solid rgba(255,255,255,.55);
+            color:#fff; border-radius:50px; font-weight:700; font-size:1rem; transition:var(--ease);
+        }
+        .btn-outline:hover { background:rgba(255,255,255,.12); border-color:#fff; }
+
+        /* ===== STATS STRIP ===== */
+        .stats { background:var(--primary); padding:36px 24px; }
+        .stats-inner {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+            gap:20px; max-width:900px; margin:0 auto; text-align:center;
+        }
+        .stat h3 { font-size:2rem; font-weight:900; color:var(--accent); }
+        .stat p { font-size:.875rem; color:rgba(255,255,255,.8); margin-top:4px; }
+
+        /* ===== SECTION SHELL ===== */
+        .wrap { max-width:1200px; margin:0 auto; padding:60px 24px; }
+        .sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+        .sec-title {
+            font-size:1.6rem; font-weight:800; color:var(--primary);
+            position:relative; padding-bottom:8px;
+        }
+        .sec-title::after {
+            content:''; position:absolute; bottom:0; left:0;
+            width:44px; height:3px; background:var(--secondary); border-radius:2px;
+        }
+        .btn-see-all {
+            padding:8px 18px; border:1.5px solid var(--secondary);
+            color:var(--secondary); border-radius:8px; font-size:.875rem;
+            font-weight:700; transition:var(--ease);
+        }
+        .btn-see-all:hover { background:var(--secondary); color:#fff; }
+
+        /* ===== BOOK GRID ===== */
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:22px; }
+
+        /* ===== BOOK CARD ===== */
+        .card {
+            background:var(--bg-card); border-radius:var(--radius);
+            overflow:hidden; box-shadow:var(--shadow);
+            transition:var(--ease); cursor:pointer; display:flex; flex-direction:column;
+        }
+        .card:hover { transform:translateY(-6px); box-shadow:var(--shadow-h); }
+        .cover {
+            height:220px; position:relative;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .cover-inner {
+            display:flex; flex-direction:column; align-items:center;
+            justify-content:center; padding:20px; width:100%; height:100%;
+        }
+        .cover-emoji { font-size:3.6rem; }
+        .cover-text {
+            font-size:.85rem; font-weight:700; text-align:center;
+            color:rgba(255,255,255,.95); margin-top:8px; line-height:1.3;
+        }
+        .badge {
+            position:absolute; top:10px; right:10px;
+            padding:3px 9px; border-radius:20px;
+            font-size:.7rem; font-weight:800; color:#fff;
+        }
+        .badge-sale { background:#E53935; }
+        .badge-new { background:var(--secondary); left:10px; right:auto; }
+        .card-body { padding:14px 16px; flex:1; display:flex; flex-direction:column; }
+        .genre-tag { font-size:.68rem; text-transform:uppercase; letter-spacing:.5px; color:var(--secondary); font-weight:800; margin-bottom:4px; }
+        .card-title { font-size:.95rem; font-weight:800; color:var(--text); line-height:1.3; margin-bottom:4px; }
+        .card-author { font-size:.82rem; color:var(--text-sec); flex:1; margin-bottom:12px; }
+        .price-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .price-orig { font-size:.78rem; color:var(--text-light); text-decoration:line-through; }
+        .price-now { font-size:1.05rem; font-weight:800; color:var(--primary); }
+        .btn-add {
+            padding:7px 13px; background:var(--primary); color:#fff;
+            border-radius:7px; font-size:.8rem; font-weight:700; transition:var(--ease);
+            white-space:nowrap; flex-shrink:0;
+        }
+        .btn-add:hover { background:var(--primary-hover); }
+        .btn-add.in-cart { background:#388e3c; }
+
+        /* ===== GENRE SECTION (home) ===== */
+        .genre-sec { background:var(--bg-dark); padding:60px 24px; }
+        .genre-sec h2 { color:var(--accent); font-size:1.6rem; font-weight:800; text-align:center; margin-bottom:32px; }
+        .genre-cards {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+            gap:16px; max-width:1100px; margin:0 auto;
+        }
+        .genre-card {
+            border-radius:var(--radius); padding:28px 20px; text-align:center;
+            cursor:pointer; transition:var(--ease); box-shadow:0 4px 18px rgba(0,0,0,.22);
+        }
+        .genre-card:hover { transform:translateY(-5px) scale(1.02); box-shadow:0 10px 30px rgba(0,0,0,.3); }
+        .genre-card-emoji { font-size:2.6rem; margin-bottom:10px; }
+        .genre-card-name { color:#fff; font-weight:800; font-size:.95rem; margin-bottom:4px; }
+        .genre-card-count { color:rgba(255,255,255,.65); font-size:.8rem; }
+
+        /* ===== SEARCH BAR ===== */
+        .search-bar {
+            background:var(--bg-card); border-radius:var(--radius);
+            padding:28px; margin-bottom:28px; box-shadow:var(--shadow);
+        }
+        .search-row { display:flex; gap:10px; }
+        .search-inp {
+            flex:1; padding:13px 18px;
+            border:2px solid var(--border); border-radius:var(--radius-s);
+            font-size:1rem; color:var(--text); background:var(--bg); outline:none;
+            transition:var(--ease);
+        }
+        .search-inp:focus { border-color:var(--primary); }
+        .btn-search {
+            padding:13px 26px; background:var(--primary); color:#fff;
+            border-radius:var(--radius-s); font-weight:700; font-size:1rem;
+            transition:var(--ease);
+        }
+        .btn-search:hover { background:var(--primary-hover); }
+
+        /* ===== FILTER PILLS ===== */
+        .filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+        .pill {
+            padding:7px 18px; border-radius:25px; font-size:.85rem;
+            font-weight:700; border:2px solid var(--border);
+            color:var(--text-sec); transition:var(--ease);
+        }
+        .pill:hover { border-color:var(--secondary); color:var(--secondary); }
+        .pill.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+
+        /* ===== MODAL ===== */
+        .overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,.6);
+            z-index:2000; display:flex; align-items:center; justify-content:center;
+            padding:20px; opacity:0; visibility:hidden; transition:var(--ease);
+        }
+        .overlay.open { opacity:1; visibility:visible; }
+        .modal {
+            background:var(--bg-card); border-radius:var(--radius);
+            max-width:820px; width:100%; max-height:90vh; overflow-y:auto;
+            transform:translateY(24px) scale(.97); transition:var(--ease);
+        }
+        .overlay.open .modal { transform:none; }
+        .modal-top { display:flex; justify-content:flex-end; padding:14px 18px 0; }
+        .btn-close {
+            width:34px; height:34px; border-radius:8px;
+            font-size:1.2rem; color:var(--text-light); transition:var(--ease);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .btn-close:hover { background:var(--bg); color:var(--text); }
+        .modal-grid {
+            display:grid; grid-template-columns:260px 1fr; gap:32px; padding:0 32px 36px;
+        }
+        .modal-cover {
+            height:340px; border-radius:var(--radius-s);
+            display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;
+        }
+        .modal-cover-emoji { font-size:5rem; }
+        .modal-cover-text { font-size:1rem; font-weight:800; color:rgba(255,255,255,.95); margin-top:14px; text-align:center; line-height:1.3; }
+        .modal-info { padding-top:12px; }
+        .m-genre { font-size:.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--secondary); font-weight:800; margin-bottom:8px; }
+        .m-title { font-size:1.6rem; font-weight:900; margin-bottom:6px; line-height:1.2; }
+        .m-author { font-size:1rem; color:var(--text-sec); margin-bottom:16px; }
+        .m-desc { font-size:.92rem; color:var(--text-sec); line-height:1.75; padding-top:16px; border-top:1px solid var(--border); margin-bottom:22px; }
+        .m-price { font-size:1.9rem; font-weight:900; color:var(--primary); margin-bottom:20px; display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+        .m-orig { font-size:1.05rem; text-decoration:line-through; color:var(--text-light); }
+        .sale-tag { font-size:.72rem; font-weight:800; background:#E53935; color:#fff; padding:3px 10px; border-radius:20px; }
+        .qty-row { display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+        .qty-label { font-size:.9rem; font-weight:700; color:var(--text-sec); }
+        .qty-ctrl { display:flex; align-items:center; border:2px solid var(--border); border-radius:8px; overflow:hidden; }
+        .qty-b {
+            width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+            font-size:1.2rem; font-weight:800; color:var(--primary); background:var(--bg);
+            transition:var(--ease);
+        }
+        .qty-b:hover { background:var(--border); }
+        .qty-v {
+            width:44px; text-align:center; font-weight:800; font-size:1rem;
+            padding:6px 0; border-left:1.5px solid var(--border); border-right:1.5px solid var(--border);
+        }
+        .btn-modal-add {
+            width:100%; padding:14px; background:var(--primary); color:#fff;
+            border-radius:10px; font-size:1rem; font-weight:800; transition:var(--ease);
+        }
+        .btn-modal-add:hover { background:var(--primary-hover); }
+        .btn-modal-add.done { background:#388e3c; }
+
+        /* ===== CART PAGE ===== */
+        .cart-wrap { max-width:900px; margin:0 auto; padding:48px 24px; }
+        .cart-h { font-size:1.8rem; font-weight:900; color:var(--primary); margin-bottom:32px; }
+        .empty-cart { text-align:center; padding:80px 24px; }
+        .empty-icon { font-size:5rem; margin-bottom:20px; }
+        .empty-cart h3 { font-size:1.3rem; color:var(--text-sec); margin-bottom:10px; }
+        .empty-cart p { color:var(--text-light); margin-bottom:28px; }
+        .cart-list { display:flex; flex-direction:column; gap:14px; margin-bottom:28px; }
+        .cart-row {
+            background:var(--bg-card); border-radius:var(--radius);
+            padding:18px 20px; display:flex; align-items:center; gap:18px;
+            box-shadow:var(--shadow);
+        }
+        .c-cover {
+            width:76px; height:96px; border-radius:8px; flex-shrink:0;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+        }
+        .c-cover-emoji { font-size:2.2rem; }
+        .c-info { flex:1; min-width:0; }
+        .c-title { font-weight:800; font-size:.95rem; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .c-author { font-size:.82rem; color:var(--text-sec); margin-bottom:6px; }
+        .c-price { font-size:1.05rem; font-weight:800; color:var(--primary); }
+        .c-ctrl { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+        .c-qty { display:flex; align-items:center; border:2px solid var(--border); border-radius:8px; overflow:hidden; }
+        .c-qty button {
+            width:30px; height:30px; background:var(--bg); font-size:1rem;
+            font-weight:800; color:var(--primary); transition:var(--ease);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .c-qty button:hover { background:var(--border); }
+        .c-qty span {
+            width:34px; text-align:center; font-weight:800;
+            border-left:1.5px solid var(--border); border-right:1.5px solid var(--border);
+            padding:3px 0;
+        }
+        .c-total { font-weight:800; min-width:88px; text-align:right; }
+        .btn-del { color:#E53935; font-size:.82rem; font-weight:700; }
+        .btn-del:hover { text-decoration:underline; }
+        .summary-box {
+            background:var(--bg-card); border-radius:var(--radius);
+            padding:28px; box-shadow:var(--shadow);
+        }
+        .summary-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:20px; }
+        .s-row { display:flex; justify-content:space-between; margin-bottom:12px; font-size:.92rem; color:var(--text-sec); }
+        .s-total { display:flex; justify-content:space-between; font-size:1.25rem; font-weight:900; color:var(--primary); padding-top:14px; border-top:2px solid var(--border); margin-top:6px; }
+        .btn-checkout {
+            width:100%; padding:15px; background:var(--primary); color:#fff;
+            border-radius:10px; font-size:1.05rem; font-weight:800;
+            margin-top:20px; transition:var(--ease);
+        }
+        .btn-checkout:hover { background:var(--primary-hover); }
+        .btn-continue {
+            width:100%; padding:12px; margin-top:10px;
+            border-radius:10px; border:2px solid var(--border);
+            color:var(--text-sec); font-size:.95rem; font-weight:700; transition:var(--ease);
+        }
+        .btn-continue:hover { border-color:var(--primary); color:var(--primary); }
+
+        /* ===== CONTACT PAGE ===== */
+        .contact-wrap { max-width:940px; margin:0 auto; padding:60px 24px; }
+        .contact-top { text-align:center; margin-bottom:44px; }
+        .contact-top h1 { font-size:1.9rem; font-weight:900; color:var(--primary); margin-bottom:10px; }
+        .contact-top p { color:var(--text-sec); font-size:1.05rem; }
+        .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:44px; }
+        .c-info h2 { font-size:1.35rem; font-weight:800; color:var(--primary); margin-bottom:12px; }
+        .c-info > p { color:var(--text-sec); margin-bottom:28px; font-size:.95rem; }
+        .c-item { display:flex; gap:16px; margin-bottom:22px; }
+        .c-icon { width:46px; height:46px; background:var(--bg); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+        .c-item-text h4 { font-weight:800; margin-bottom:3px; font-size:.95rem; }
+        .c-item-text p { font-size:.875rem; color:var(--text-sec); }
+        .delivery-box {
+            margin-top:24px; padding:20px; background:var(--bg);
+            border-radius:var(--radius); border:2px solid var(--border);
+        }
+        .delivery-box h4 { font-weight:800; color:var(--primary); margin-bottom:10px; }
+        .delivery-box p { font-size:.875rem; color:var(--text-sec); line-height:1.8; }
+        .contact-form { display:flex; flex-direction:column; gap:16px; }
+        .contact-form h3 { font-size:1.15rem; font-weight:800; color:var(--primary); margin-bottom:4px; }
+        .f-group { display:flex; flex-direction:column; gap:5px; }
+        .f-group label { font-size:.82rem; font-weight:700; color:var(--text-sec); }
+        .f-inp {
+            padding:12px 15px; border:2px solid var(--border); border-radius:8px;
+            font-size:.95rem; background:var(--bg); color:var(--text); outline:none; transition:var(--ease);
+        }
+        .f-inp:focus { border-color:var(--primary); }
+        textarea.f-inp { resize:vertical; min-height:110px; }
+        .btn-send {
+            padding:14px; background:var(--primary); color:#fff;
+            border-radius:10px; font-size:1rem; font-weight:800; transition:var(--ease);
+        }
+        .btn-send:hover { background:var(--primary-hover); }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position:fixed; bottom:28px; right:28px; z-index:9999;
+            background:#2e7d32; color:#fff; border-radius:10px;
+            padding:13px 18px; font-size:.9rem; font-weight:600;
+            display:flex; align-items:center; gap:10px;
+            box-shadow:0 4px 20px rgba(0,0,0,.28);
+            transform:translateY(80px); opacity:0; transition:.3s ease;
+        }
+        #toast.show { transform:translateY(0); opacity:1; }
+
+        /* ===== NO RESULTS ===== */
+        .no-res { text-align:center; padding:60px 24px; }
+        .no-res h3 { font-size:1.2rem; color:var(--text-sec); margin:12px 0 8px; }
+        .no-res p { color:var(--text-light); margin-bottom:24px; }
+
+        /* ===== FOOTER ===== */
+        footer { background:var(--bg-dark); color:rgba(255,255,255,.72); padding:56px 24px 28px; }
+        .f-grid {
+            display:grid; grid-template-columns:2fr 1fr 1fr;
+            gap:40px; max-width:1000px; margin:0 auto 40px;
+        }
+        .f-brand h3 { font-size:1.3rem; color:var(--accent); font-weight:800; margin-bottom:12px; }
+        .f-brand p { font-size:.875rem; line-height:1.75; }
+        .f-col h4 { color:#fff; margin-bottom:14px; font-size:.9rem; font-weight:800; }
+        .f-col ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+        .f-col li { font-size:.85rem; cursor:pointer; transition:var(--ease); }
+        .f-col li:hover { color:var(--accent); }
+        .f-bottom {
+            border-top:1px solid rgba(255,255,255,.1); padding-top:22px;
+            text-align:center; font-size:.78rem; max-width:1000px; margin:0 auto;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width:768px) {
+            .nav-links, .nav-search { display:none; }
+            .mob-menu-btn { display:flex; align-items:center; }
+            .hero { padding:64px 18px 56px; }
+            .grid { grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:14px; }
+            .modal-grid { grid-template-columns:1fr; }
+            .modal-cover { height:220px; }
+            .modal-cover-emoji { font-size:3.5rem; }
+            .contact-grid { grid-template-columns:1fr; }
+            .f-grid { grid-template-columns:1fr; gap:28px; }
+            .cart-row { flex-wrap:wrap; }
+            .stats-inner { grid-template-columns:repeat(2,1fr); }
+            .modal-grid { padding:0 20px 28px; }
+        }
+        @media (max-width:480px) {
+            .grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+            .cover { height:170px; }
+            .cover-emoji { font-size:2.8rem; }
+            .hero h1 { font-size:1.75rem; }
+            .c-ctrl { flex-direction:column; align-items:flex-end; }
+            .cart-h { font-size:1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ======== NAVIGATION ======== -->
+<nav>
+    <div class="nav-logo" onclick="go('home')">📚 <span>Номын</span>Ертөнц</div>
+    <div class="nav-links">
+        <button id="nl-home"    onclick="go('home')">Нүүр</button>
+        <button id="nl-books"   onclick="go('books')">Номнууд</button>
+        <button id="nl-contact" onclick="go('contact')">Холбоо барих</button>
+    </div>
+    <div class="nav-right">
+        <div class="nav-search">
+            <span>🔍</span>
+            <input type="text" id="ns-inp" placeholder="Ном хайх..." oninput="navQ(this.value)">
+        </div>
+        <button class="cart-btn" onclick="go('cart')">
+            🛒 Сагс <span class="cart-count" id="cc">0</span>
+        </button>
+        <button class="mob-menu-btn" onclick="toggleNav()">☰</button>
+    </div>
+</nav>
+
+<!-- ======== MOBILE NAV ======== -->
+<div id="mob-nav">
+    <button onclick="go('home');toggleNav()">🏠 Нүүр</button>
+    <button onclick="go('books');toggleNav()">📚 Номнууд</button>
+    <button onclick="go('contact');toggleNav()">📞 Холбоо барих</button>
+    <div class="mob-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Ном хайх..." oninput="navQ(this.value);if(this.value)go('books')">
+    </div>
+</div>
+
+<!-- ======== MAIN ======== -->
+<main id="app"></main>
+
+<!-- ======== MODAL ======== -->
+<div class="overlay" id="overlay" onclick="maybeClose(event)">
+    <div class="modal">
+        <div class="modal-top"><button class="btn-close" onclick="closeM()">✕</button></div>
+        <div class="modal-grid" id="modal-grid"></div>
+    </div>
+</div>
+
+<!-- ======== TOAST ======== -->
+<div id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+
+<!-- ======== FOOTER ======== -->
+<footer>
+    <div class="f-grid">
+        <div class="f-brand">
+            <h3>📚 НомынЕртөнц</h3>
+            <p>Монгол дахь хамгийн том онлайн номын дэлгүүр.<br>Мэдлэг бол хамгийн үнэт баялаг — бид таны тал дээр.</p>
+        </div>
+        <div class="f-col">
+            <h4>Холбоос</h4>
+            <ul>
+                <li onclick="go('home')">Нүүр хуудас</li>
+                <li onclick="go('books')">Номнууд</li>
+                <li onclick="go('cart')">Миний сагс</li>
+                <li onclick="go('contact')">Холбоо барих</li>
+            </ul>
+        </div>
+        <div class="f-col">
+            <h4>Ангиллууд</h4>
+            <ul>
+                <li onclick="catGo('Уран зохиол')">Уран зохиол</li>
+                <li onclick="catGo('Хүүхдийн')">Хүүхдийн</li>
+                <li onclick="catGo('Мэргэжлийн')">Мэргэжлийн</li>
+                <li onclick="catGo('Өөрийгөө хөгжүүлэх')">Өөрийгөө хөгжүүлэх</li>
+            </ul>
+        </div>
+    </div>
+    <div class="f-bottom">
+        © 2024 НомынЕртөнц — Бүх эрх хуулиар хамгаалагдсан · УБ хот: 1–2 өдөр хүргэлт · Орон нутаг: 3–5 өдөр
+    </div>
+</footer>
+
+<!-- ======== SCRIPT ======== -->
+<script>
+/* ===== DATA ===== */
+const BOOKS = [
+    {
+        id:1, title:"Алтан Гадас", author:"Д. Нацагдорж",
+        genre:"Уран зохиол", price:15000, orig:null,
+        isNew:false, sale:false, emoji:"🌟", clr:"#8B4513",
+        desc:"Монгол уран зохиолын гайхамшигт зохиолч Д. Нацагдоржийн шилдэг бүтээлийн нэг. Монголын нутаг усны гоо сайхан, хүний гүн мэдрэмжийг хурц, уянгалаг өнгөөр дүрсэлсэн туульс шүлгийн цуглуулга."
+    },
+    {
+        id:2, title:"Хүний хүү", author:"Ч. Лодойдамба",
+        genre:"Уран зохиол", price:18000, orig:22000,
+        isNew:false, sale:true, emoji:"📖", clr:"#5D4037",
+        desc:"Монголын тал нутгийн гүнд нэгэн хүний өсч торнисон амьдрал. Чөлөөт байгаль, нүүдэлчдийн ёс заншил, хайр дурлалын тухай хожмын уран зохиолын классик бүтээл."
+    },
+    {
+        id:3, title:"Бага Хунтайж", author:"А. де Сент-Экзюпери",
+        genre:"Хүүхдийн", price:9500, orig:null,
+        isNew:true, sale:false, emoji:"👑", clr:"#1565C0",
+        desc:"Дэлхийн бүх насны хүмүүст зориулагдсан энэхүү үнэт зохиол нь жижигхэн хунтайжийн аяллаар дамжуулан найрамдал, хайр, хүний мөн чанарын тухай ухааны үнэнийг тунгааж өгдөг."
+    },
+    {
+        id:4, title:"Хэрлэн голын хөвүүн", author:"Л. Түдэв",
+        genre:"Хүүхдийн", price:11000, orig:null,
+        isNew:false, sale:false, emoji:"🌊", clr:"#00695C",
+        desc:"Хэрлэн мөрний эрэг дагуух хүүхдийн насны адал явдлыг хурцаар өгүүлсэн монгол хүүхдийн уран зохиолын сонгодог бүтээл. Хуурмаг биш аз жаргалыг олж харах сургамжтай."
+    },
+    {
+        id:5, title:"Зуун жилийн дангина", author:"Т. Галсан",
+        genre:"Уран зохиол", price:16500, orig:null,
+        isNew:true, sale:false, emoji:"🌸", clr:"#880E4F",
+        desc:"Нэгэн гэр бүлийн зуун жилийн хугацааны амьдралаар Монголын нийгэм, түүхийн өөрчлөлтийг нэвт харуулсан уянгалаг, уйлуулам, сайхан роман."
+    },
+    {
+        id:6, title:"Бизнесийн үндэс", author:"Б. Батбаяр",
+        genre:"Мэргэжлийн", price:35000, orig:42000,
+        isNew:false, sale:true, emoji:"💼", clr:"#37474F",
+        desc:"Монгол орны бизнесийн орчинд зориулан бичигдсэн практик гарын авлага. Бизнес эхлүүлэх, удирдан зохион байгуулах, өргөжүүлэх талаарх тодорхой алхмуудыг амжилттай кейсүүдтэй хослуулан тайлбарласан."
+    },
+    {
+        id:7, title:"Python програмчлал", author:"Т. Ганбаатар",
+        genre:"Мэргэжлийн", price:42000, orig:null,
+        isNew:true, sale:false, emoji:"💻", clr:"#1A237E",
+        desc:"Python хэлийг монгол хэлээр тайлбарласан анхны цогц гарын авлага. Анхан шатнаас дата шинжилгээ, хиймэл оюун ухаан хүртэл бүх зүйлийг практик дасгалуудаар сурна."
+    },
+    {
+        id:8, title:"Өөрийгөө таних нь", author:"Д. Дорж",
+        genre:"Өөрийгөө хөгжүүлэх", price:24000, orig:28000,
+        isNew:false, sale:true, emoji:"🧘", clr:"#4A148C",
+        desc:"Буддын болон орчин үеийн сэтгэл зүйг хослуулан, өөрийн дотоод ертөнцийг нээж, амьдралдаа зориулалттай болох замыг харуулсан ухааны ном."
+    },
+    {
+        id:9, title:"Монголын нууц товчоо", author:"XIII зуун",
+        genre:"Түүх", price:28000, orig:null,
+        isNew:false, sale:false, emoji:"🏹", clr:"#BF360C",
+        desc:"Монгол үндэстний хамгийн эртний дурсгалт бичиг. Чингис хааны гарвал, амьдрал, Монгол эзэнт гүрний байгуулагдсан түүх, хуучны ёс заншил, аман уламжлалыг хурцаар тусгасан үнэт эх сурвалж."
+    },
+    {
+        id:10, title:"Эрх чөлөөтэй амьдрал", author:"Т. Батмөнх",
+        genre:"Өөрийгөө хөгжүүлэх", price:19800, orig:24000,
+        isNew:false, sale:true, emoji:"🦋", clr:"#006064",
+        desc:"Санхүүгийн эрх чөлөөнд хүрэх, цаг хугацааны эзэн болох, хүссэн амьдралаа бүтээх талаарх практик, шинэлэг гарын авлага. Монгол хүний жишээн дээр тулгуурлан бичигдсэн."
+    },
+    {
+        id:11, title:"Квант физикийн ертөнц", author:"Б. Мөнхтулга",
+        genre:"Шинжлэх ухаан", price:38000, orig:null,
+        isNew:true, sale:false, emoji:"⚛️", clr:"#0D47A1",
+        desc:"Орчин үеийн физикийн нарийн ширийн ертөнц болох квант механикийг ойлгомжтой, сонирхолтой, монгол хэлээр анх удаа бичсэн ном. Эрдэмтэн болон сонирхогч хэн бүхэнд."
+    },
+    {
+        id:12, title:"Монголын уламжлалт анагаах ухаан", author:"Д. Энхбаяр",
+        genre:"Мэргэжлийн", price:31000, orig:null,
+        isNew:false, sale:false, emoji:"🌿", clr:"#2E7D32",
+        desc:"Монгол анагаах ухааны мянга мянган жилийн хуримтлал. Ургамлын эм, эмчилгээний аргачлал, тал нутгийн эмч нарын ухааныг орчин үеийн шинжлэх ухаанаар нотолсон тухай цогц судалгаа."
+    }
+];
+
+const GENRES = [
+    {name:"Уран зохиол",       emoji:"📝", clr:"#8B4513"},
+    {name:"Хүүхдийн",          emoji:"🎈", clr:"#1565C0"},
+    {name:"Мэргэжлийн",        emoji:"💼", clr:"#37474F"},
+    {name:"Өөрийгөө хөгжүүлэх",emoji:"🚀", clr:"#4A148C"},
+    {name:"Түүх",              emoji:"🏛️",  clr:"#BF360C"},
+    {name:"Шинжлэх ухаан",     emoji:"🔬", clr:"#0D47A1"}
+];
+
+/* ===== STATE ===== */
+let cart   = [];   // [{id, qty}]
+let page   = 'home';
+let query  = '';
+let cat    = 'Бүгд';
+let mQty   = 1;
+let mId    = null;
+
+/* ===== HELPERS ===== */
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString('mn-MN') + ' ₮';
+
+function toast(msg) {
+    $('tm').textContent = msg;
+    const el = $('toast');
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function cartCount() { return cart.reduce((s,i) => s + i.qty, 0); }
+
+function inCart(id) { const r = cart.find(i => i.id === id); return r ? r.qty : 0; }
+
+function updateCC() { $('cc').textContent = cartCount(); }
+
+/* ===== ROUTING ===== */
+function go(p) {
+    page = p;
+    document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+    const m = {home:'nl-home', books:'nl-books', contact:'nl-contact'}[p];
+    if (m) $(m).classList.add('active');
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function catGo(c) { cat = c; go('books'); }
+function navQ(v) {
+    query = v;
+    if (v) { page = 'books'; }
+    if (page === 'books') render();
+}
+
+function toggleNav() {
+    const n = $('mob-nav');
+    n.classList.toggle('open');
+}
+
+/* ===== RENDER DISPATCH ===== */
+function render() {
+    const app = $('app');
+    if (page === 'home')    app.innerHTML = renderHome();
+    if (page === 'books')   app.innerHTML = renderBooks();
+    if (page === 'cart')    app.innerHTML = renderCart();
+    if (page === 'contact') app.innerHTML = renderContact();
+    // restore focus on search input if on books page
+    if (page === 'books') {
+        const inp = document.querySelector('.search-inp');
+        if (inp && query) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+    }
+}
+
+/* ===== HOME ===== */
+function renderHome() {
+    const featured = BOOKS.slice(0, 4);
+    const newB   = BOOKS.filter(b => b.isNew);
+    const saleB  = BOOKS.filter(b => b.sale);
+    return `
+<div>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <h1>Номын дэлхийд тавтай морил</h1>
+      <p>Монголын хамгийн том онлайн номын дэлгүүр. 10,000+ ном нэг дороос — мэдлэг, урам зориг, баясал олоорой.</p>
+      <div class="hero-btns">
+        <button class="btn-cta"     onclick="go('books')">Номнуудыг үзэх →</button>
+        <button class="btn-outline" onclick="go('contact')">Бидэнтэй холбогдох</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat"><h3>10,000+</h3><p>Номын сан</p></div>
+      <div class="stat"><h3>500+</h3><p>Зохиолч</p></div>
+      <div class="stat"><h3>15,000+</h3><p>Хэрэглэгч</p></div>
+      <div class="stat"><h3>1–2</h3><p>Хоногт хүргэлт</p></div>
+    </div>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title">Онцлох номнууд</h2>
+      <button class="btn-see-all" onclick="go('books')">Бүгдийг харах →</button>
+    </div>
+    <div class="grid">${featured.map(bookCard).join('')}</div>
+  </div>
+
+  <!-- NEW -->
+  ${newB.length ? `
+  <div style="background:linear-gradient(135deg,#FDF0E0,#FFF8F0);padding:60px 0">
+    <div class="wrap" style="padding-top:0;padding-bottom:0">
+      <div class="sec-head">
+        <h2 class="sec-title">✨ Шинээр ирсэн</h2>
+        <button class="btn-see-all" onclick="go('books')">Бүгдийг харах →</button>
+      </div>
+      <div class="grid">${newB.map(bookCard).join('')}</div>
+    </div>
+  </div>` : ''}
+
+  <!-- SALE -->
+  ${saleB.length ? `
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title" style="color:#E53935">🔥 Хямдралтай номнууд</h2>
+      <button class="btn-see-all" style="border-color:#E53935;color:#E53935" onclick="go('books')">Бүгдийг харах →</button>
+    </div>
+    <div class="grid">${saleB.map(bookCard).join('')}</div>
+  </div>` : ''}
+
+  <!-- GENRES -->
+  <div class="genre-sec">
+    <h2>Ангиллаар үзэх</h2>
+    <div class="genre-cards">
+      ${GENRES.map(g => `
+        <div class="genre-card" style="background:${g.clr}" onclick="catGo('${g.name}')">
+          <div class="genre-card-emoji">${g.emoji}</div>
+          <div class="genre-card-name">${g.name}</div>
+          <div class="genre-card-count">${BOOKS.filter(b=>b.genre===g.name).length} ном</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</div>`;
+}
+
+/* ===== BOOK CARD ===== */
+function bookCard(b) {
+    const c = inCart(b.id) > 0;
+    return `
+<div class="card" onclick="openM(${b.id})">
+  <div class="cover" style="background:linear-gradient(145deg,${b.clr}cc,${b.clr})">
+    ${b.sale  ? '<span class="badge badge-sale">ХЯМДРАЛ</span>' : ''}
+    ${b.isNew ? '<span class="badge badge-new">ШИНЭ</span>'    : ''}
+    <div class="cover-inner">
+      <div class="cover-emoji">${b.emoji}</div>
+      <div class="cover-text">${b.title}</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="genre-tag">${b.genre}</div>
+    <div class="card-title">${b.title}</div>
+    <div class="card-author">${b.author}</div>
+    <div class="price-row">
+      <div>
+        ${b.orig ? `<div class="price-orig">${fmt(b.orig)}</div>` : ''}
+        <div class="price-now">${fmt(b.price)}</div>
+      </div>
+      <button class="btn-add ${c?'in-cart':''}" onclick="event.stopPropagation();addCart(${b.id})">
+        ${c ? '✓ Нэмсэн' : '+ Сагс'}
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ===== BOOKS PAGE ===== */
+function renderBooks() {
+    const genres = ['Бүгд', ...new Set(BOOKS.map(b=>b.genre))];
+    let list = BOOKS;
+    if (cat !== 'Бүгд') list = list.filter(b => b.genre === cat);
+    if (query) {
+        const q = query.toLowerCase();
+        list = list.filter(b =>
+            b.title.toLowerCase().includes(q) ||
+            b.author.toLowerCase().includes(q) ||
+            b.genre.toLowerCase().includes(q)
+        );
+    }
+    return `
+<div class="wrap" style="max-width:1200px">
+  <h1 class="sec-title" style="font-size:1.8rem;margin-bottom:28px">📚 Бүх номнууд</h1>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <div class="search-row">
+      <input class="search-inp" type="text" placeholder="🔍 Ном нэр эсвэл зохиолчоор хайх..."
+        value="${escHtml(query)}" oninput="doSearch(this.value)">
+      <button class="btn-search" onclick="doSearch(document.querySelector('.search-inp').value)">Хайх</button>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    ${genres.map(g => `
+      <button class="pill ${cat===g?'on':''}" onclick="setCat('${g}')">
+        ${g} <span style="opacity:.65;font-weight:400;font-size:.78rem">(${g==='Бүгд'?BOOKS.length:BOOKS.filter(b=>b.genre===g).length})</span>
+      </button>
+    `).join('')}
+  </div>
+
+  <!-- COUNT -->
+  <p style="margin-bottom:20px;font-size:.875rem;color:var(--text-sec)">
+    ${list.length > 0 ? `${list.length} ном олдлоо` : ''}
+    ${query ? ` &mdash; "<strong>${escHtml(query)}</strong>" хайлтын үр дүн` : ''}
+  </p>
+
+  <!-- GRID -->
+  ${list.length
+    ? `<div class="grid">${list.map(bookCard).join('')}</div>`
+    : `<div class="no-res">
+         <div style="font-size:3.5rem">🔍</div>
+         <h3>Ном олдсонгүй</h3>
+         <p>Хайлт эсвэл ангиллаа өөрчлөөд дахин оролдоно уу</p>
+         <button class="btn-cta" style="display:inline-block" onclick="clearQ()">Хайлт цэвэрлэх</button>
+       </div>`
+  }
+</div>`;
+}
+
+function doSearch(v) { query = v; render(); }
+function setCat(c)   { cat = c; render(); }
+function clearQ()    { query = ''; cat = 'Бүгд'; render(); }
+
+/* ===== MODAL ===== */
+function openM(id) {
+    const b = BOOKS.find(x => x.id === id);
+    if (!b) return;
+    mId = id; mQty = 1;
+    $('modal-grid').innerHTML = `
+      <div class="modal-cover" style="background:linear-gradient(145deg,${b.clr}cc,${b.clr})">
+        <div class="modal-cover-emoji">${b.emoji}</div>
+        <div class="modal-cover-text">${b.title}</div>
+      </div>
+      <div class="modal-info">
+        <div class="m-genre">${b.genre}</div>
+        <div class="m-title">${b.title}</div>
+        <div class="m-author">✍️ ${b.author}</div>
+        <div class="m-desc">${b.desc}</div>
+        <div class="m-price">
+          ${b.orig ? `<span class="m-orig">${fmt(b.orig)}</span>` : ''}
+          ${fmt(b.price)}
+          ${b.sale ? '<span class="sale-tag">ХЯМДРАЛ</span>' : ''}
+        </div>
+        <div class="qty-row">
+          <span class="qty-label">Тоо ширхэг:</span>
+          <div class="qty-ctrl">
+            <button class="qty-b" onclick="mDelta(-1)">−</button>
+            <div class="qty-v" id="mq">${mQty}</div>
+            <button class="qty-b" onclick="mDelta(1)">+</button>
+          </div>
+        </div>
+        <button class="btn-modal-add" id="mab" onclick="mAdd()">
+          🛒 Сагсанд нэмэх &mdash; ${fmt(b.price * mQty)}
+        </button>
+      </div>
+    `;
+    $('overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function mDelta(d) {
+    const b = BOOKS.find(x => x.id === mId);
+    mQty = Math.max(1, mQty + d);
+    $('mq').textContent = mQty;
+    $('mab').textContent = `🛒 Сагсанд нэмэх — ${fmt(b.price * mQty)}`;
+}
+
+function closeM() {
+    $('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function maybeClose(e) {
+    if (e.target === $('overlay')) closeM();
+}
+
+function mAdd() {
+    addCart(mId, mQty);
+    const btn = $('mab');
+    btn.textContent = '✓ Сагсанд нэмэгдлээ!';
+    btn.classList.add('done');
+    setTimeout(closeM, 900);
+}
+
+/* ===== CART OPS ===== */
+function addCart(id, qty = 1) {
+    const ex = cart.find(i => i.id === id);
+    if (ex) ex.qty += qty; else cart.push({id, qty});
+    updateCC();
+    const b = BOOKS.find(x => x.id === id);
+    toast(`"${b.title}" сагсанд нэмэгдлээ ✓`);
+    if (page === 'books' || page === 'cart') render();
+}
+
+function remCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    updateCC(); render();
+}
+
+function changeQty(id, d) {
+    const r = cart.find(i => i.id === id);
+    if (!r) return;
+    r.qty = Math.max(0, r.qty + d);
+    if (r.qty === 0) cart = cart.filter(i => i.id !== id);
+    updateCC(); render();
+}
+
+/* ===== CART PAGE ===== */
+function renderCart() {
+    if (!cart.length) return `
+<div class="cart-wrap">
+  <h1 class="cart-h">🛒 Миний сагс</h1>
+  <div class="empty-cart">
+    <div class="empty-icon">🛒</div>
+    <h3>Сагс хоосон байна</h3>
+    <p>Номнуудаас сонгоод сагсандаа нэмнэ үү</p>
+    <button class="btn-cta" onclick="go('books')">Номнуудыг үзэх</button>
+  </div>
+</div>`;
+
+    const sub = cart.reduce((s,i) => {
+        const b = BOOKS.find(x=>x.id===i.id);
+        return s + b.price * i.qty;
+    }, 0);
+    const ship = sub >= 50000 ? 0 : 5000;
+    const total = sub + ship;
+    const cnt   = cartCount();
+
+    return `
+<div class="cart-wrap">
+  <h1 class="cart-h">🛒 Миний сагс (${cnt} ном)</h1>
+  <div class="cart-list">
+    ${cart.map(item => {
+        const b = BOOKS.find(x=>x.id===item.id);
+        return `
+    <div class="cart-row">
+      <div class="c-cover" style="background:linear-gradient(145deg,${b.clr}bb,${b.clr})">
+        <div class="c-cover-emoji">${b.emoji}</div>
+      </div>
+      <div class="c-info">
+        <div class="c-title">${b.title}</div>
+        <div class="c-author">${b.author}</div>
+        <div class="c-price">${fmt(b.price)}</div>
+      </div>
+      <div class="c-ctrl">
+        <div class="c-qty">
+          <button onclick="changeQty(${b.id},-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${b.id},1)">+</button>
+        </div>
+        <div class="c-total">${fmt(b.price * item.qty)}</div>
+        <button class="btn-del" onclick="remCart(${b.id})">🗑 Устгах</button>
+      </div>
+    </div>`;
+    }).join('')}
+  </div>
+
+  <div class="summary-box">
+    <h3>Захиалгын мэдээлэл</h3>
+    <div class="s-row"><span>Нийт дүн (${cnt} ном)</span><span>${fmt(sub)}</span></div>
+    <div class="s-row">
+      <span>Хүргэлтийн төлбөр</span>
+      <span>${ship === 0
+        ? '<span style="color:#388e3c;font-weight:800">Үнэгүй 🎉</span>'
+        : fmt(ship)}</span>
+    </div>
+    ${ship > 0
+        ? `<p style="font-size:.8rem;color:var(--text-light);margin-bottom:8px">
+             💡 ${fmt(50000)}-аас дээш захиалгад хүргэлт үнэгүй</p>`
+        : `<p style="font-size:.8rem;color:#388e3c;margin-bottom:8px">
+             ✅ Хүргэлт үнэгүй болсон байна!</p>`}
+    <div class="s-total"><span>Нийт төлбөр</span><span>${fmt(total)}</span></div>
+    <button class="btn-checkout" onclick="checkout()">✅ Захиалга өгөх</button>
+    <button class="btn-continue" onclick="go('books')">← Дэлгүүрлэлт үргэлжлүүлэх</button>
+  </div>
+</div>`;
+}
+
+function checkout() {
+    toast('🎉 Захиалга амжилттай илгээгдлээ!');
+    cart = []; updateCC();
+    setTimeout(() => {
+        alert('Захиалга амжилттай хүлээн авлаа!\n\n' +
+              '📧 Баталгаажуулах имэйл удахгүй ирнэ.\n' +
+              '🚚 Хүргэлт: Улаанбаатар 1–2 өдөр · Орон нутаг 3–5 өдөр');
+        go('home');
+    }, 400);
+}
+
+/* ===== CONTACT PAGE ===== */
+function renderContact() {
+    return `
+<div class="contact-wrap">
+  <div class="contact-top">
+    <h1>📬 Холбоо барих</h1>
+    <p>Асуулт, санал хүсэлт байвал бидэнд хандаарай — ажлын өдрүүдэд 9:00–18:00</p>
+  </div>
+  <div class="contact-grid">
+    <div class="c-info">
+      <h2>Бидэнтэй холбогдоорой</h2>
+      <p>Та номнуудын талаар асуулт байвал, эсвэл захиалгын мэдээлэл авахыг хүсвэл бидэнд хандаарай. Мэргэжлийн баг таныг хүлээж байна.</p>
+
+      <div class="c-item">
+        <div class="c-icon">📍</div>
+        <div class="c-item-text">
+          <h4>Хаяг</h4>
+          <p>Улаанбаатар хот, Сүхбаатар дүүрэг<br>Номын гудамж 15, НомынТөв 3-р давхар</p>
+        </div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">📞</div>
+        <div class="c-item-text">
+          <h4>Утас</h4>
+          <p>+976 7711-2233<br>+976 9911-4455</p>
+        </div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">📧</div>
+        <div class="c-item-text">
+          <h4>И-мэйл</h4>
+          <p>info@nomynertunc.mn<br>order@nomynertunc.mn</p>
+        </div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">🕐</div>
+        <div class="c-item-text">
+          <h4>Ажлын цаг</h4>
+          <p>Даваа–Баасан: 9:00–18:00<br>Бямба: 10:00–15:00</p>
+        </div>
+      </div>
+
+      <div class="delivery-box">
+        <h4>🚚 Хүргэлтийн нөхцөл</h4>
+        <p>
+          • Улаанбаатар хот: 1–2 ажлын өдөр (₮5,000)<br>
+          • Орон нутаг: 3–5 ажлын өдөр (₮8,000–15,000)<br>
+          • ₮50,000-аас дээш захиалгад хүргэлт үнэгүй!<br>
+          • Захиалга баталгаажсанаас хойш 2 цагт илгээнэ
+        </p>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Мессеж илгээх</h3>
+      <div class="f-group">
+        <label>Нэр *</label>
+        <input type="text" class="f-inp" placeholder="Таны нэр">
+      </div>
+      <div class="f-group">
+        <label>И-мэйл *</label>
+        <input type="email" class="f-inp" placeholder="tanii@email.com">
+      </div>
+      <div class="f-group">
+        <label>Утасны дугаар</label>
+        <input type="tel" class="f-inp" placeholder="+976 ****-****">
+      </div>
+      <div class="f-group">
+        <label>Сэдэв *</label>
+        <select class="f-inp" style="cursor:pointer">
+          <option>Захиалга ба хүргэлт</option>
+          <option>Ном хайж байна</option>
+          <option>Буцаалт ба солилт</option>
+          <option>Төлбөр ба хөнгөлөлт</option>
+          <option>Бусад</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <label>Мессеж *</label>
+        <textarea class="f-inp" placeholder="Таны асуулт, санал хүсэлтийг энд бичнэ үү..."></textarea>
+      </div>
+      <button class="btn-send" onclick="sendMsg()">📨 Илгээх</button>
+    </div>
+  </div>
+</div>`;
+}
+
+function sendMsg() {
+    toast('✓ Мессеж амжилттай илгээгдлээ! Удахгүй хариулна.');
+}
+
+/* ===== UTILS ===== */
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ===== KEYBOARD ===== */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeM();
+});
+
+/* ===== INIT ===== */
+render();
+updateCC();
+</script>
+</body>
+</html>
